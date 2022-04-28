@@ -10,7 +10,7 @@ import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
 import { AuthContext } from '../contexts/AuthContext';
 
-const Home: NextPage = () => {
+const Events: NextPage = () => {
   const { user } = useContext(AuthContext);
   const isOpen = useSelector((state: any) => state.isOpen);
 
@@ -27,12 +27,7 @@ const Home: NextPage = () => {
   return (
     <Grid
       h='100vh'
-      templateColumns={{
-        base: 'auto',
-        lg: !isOpen ? '260px auto' : '76px auto',
-        md: !isOpen ? '260px auto' : '76px auto',
-        sm: 'auto',
-      }}
+      templateColumns={{ base: !isOpen ? '260px auto' : 'auto' }}
       templateRows='repeat(1, 1fr)'
     >
       <SideBar />
@@ -61,4 +56,4 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   };
 };
 
-export default Home;
+export default Events;
