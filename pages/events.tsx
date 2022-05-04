@@ -1,19 +1,14 @@
-import { CalendarIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
+import { SearchIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Button,
   Flex,
   Grid,
-  Heading,
-  HStack,
-  Image,
   Input,
   InputGroup,
   InputLeftElement,
   Menu,
   MenuButton,
   MenuDivider,
-  MenuItem,
   MenuItemOption,
   MenuList,
   MenuOptionGroup,
@@ -34,7 +29,6 @@ import { Card } from '../components/Card';
 const Events: NextPage = () => {
   const isOpen = useSelector((state: any) => state.isOpen);
   const router = useRouter();
-  const card = [1];
 
   return (
     <Grid
@@ -60,10 +54,9 @@ const Events: NextPage = () => {
             >
               <Flex align={'center'} gap='10px'>
                 <InputGroup>
-                  <InputLeftElement
-                    pointerEvents='none'
-                    children={<SearchIcon color='gray.300' />}
-                  />
+                  <InputLeftElement pointerEvents='none'>
+                    <SearchIcon color='gray.300' />
+                  </InputLeftElement>
                   <Input type='search' placeholder='Pesquisar...' />
                 </InputGroup>
                 <Menu closeOnSelect={true}>
