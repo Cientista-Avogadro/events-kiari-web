@@ -32,7 +32,7 @@ export const Card = (props: BoxProps) => {
       borderRadius={'10px'}
       {...props}
     >
-      <Image src={img} maxW='145px' />
+      <Image src={img} maxW='145px' alt='events description'/>
       <Flex flexDir={'column'} py='5px' gap={'5px'}>
         <Text fontSize={'17px'} maxW='70%' noOfLines={1} title='Game Over 2dgh'>
           Game Over 2dghn fgjgfjfg
