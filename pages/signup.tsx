@@ -10,7 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Image from 'next/image';
-import React, { useContext } from 'react';
+import React from 'react';
 import loginImage from '../assets/img/siginImage.png';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';

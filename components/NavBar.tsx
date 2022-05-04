@@ -1,8 +1,6 @@
 import { BellIcon, HamburgerIcon, SearchIcon } from '@chakra-ui/icons';
 import {
   Avatar,
-  AvatarBadge,
-  Button,
   Divider,
   Flex,
   Menu,
@@ -14,19 +12,23 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import Link from 'next/link';
-import React, { useContext } from 'react';
+import React from 'react';
+import { VscSignOut } from 'react-icons/vsc';
 import { useDispatch, useSelector } from 'react-redux';
-import { AuthContext } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
 interface NavBarProps {
   pathname: string;
 }
 
 const NavBar = ({ pathname }: NavBarProps) => {
-  const { user } = useContext(AuthContext);
+  const { user, signOut } = useAuth();
   const dispatch = useDispatch();
   const isOpen = useSelector((state: any) => state.isOpen);
+
+  const handleSignOut = () => {
+    signOut();
+  };
 
   return (
     <Flex
@@ -44,7 +46,9 @@ const NavBar = ({ pathname }: NavBarProps) => {
           cursor={'pointer'}
           onClick={() => dispatch({ type: 'set', isOpen: !isOpen })}
         />
-        <Text display={{ base: 'none', lg: 'initial', md: 'initial' }}>{pathname}</Text>
+        <Text display={{ base: 'none', lg: 'initial', md: 'initial' }}>
+          {pathname}
+        </Text>
       </Flex>
       <Flex align={'center'} gap='10px'>
         <SearchIcon
@@ -66,7 +70,9 @@ const NavBar = ({ pathname }: NavBarProps) => {
           height={'32px'}
           display={{ base: 'none', lg: 'initial', md: 'initial' }}
         />
-        <Text display={{ base: 'none', lg: 'initial', md: 'initial' }}>{user?.name}</Text>
+        <Text display={{ base: 'none', lg: 'initial', md: 'initial' }}>
+          {user?.name}
+        </Text>
         <Menu>
           <MenuButton as={Stack} direction='row' spacing={4} cursor={'pointer'}>
             <Avatar
@@ -78,14 +84,23 @@ const NavBar = ({ pathname }: NavBarProps) => {
           </MenuButton>
           <MenuList>
             <MenuGroup title='Profile'>
-              <Text>{user?.name}</Text>
-              <MenuItem>My Account</MenuItem>
-              <MenuItem>Payments </MenuItem>
+              <Text
+                ml={'13px'}
+                textTransform='capitalize'
+                color={'ActiveCaption'}
+              >
+                {user?.name}
+              </Text>
+              <MenuItem>Minha Conta</MenuItem>
+              <MenuItem>Pagamentos </MenuItem>
             </MenuGroup>
             <MenuDivider />
             <MenuGroup title='Help'>
               <MenuItem>Docs</MenuItem>
-              <MenuItem>FAQ</MenuItem>
+              <MenuItem display={'flex'} gap='10px' onClick={handleSignOut}>
+                <VscSignOut />
+                Sair
+              </MenuItem>
             </MenuGroup>
           </MenuList>
         </Menu>
