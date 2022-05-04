@@ -1,9 +1,11 @@
-import React from 'react'
+import { Box } from '@chakra-ui/react';
 
-const Content = () => {
+const Content = ({ children }: any) => {
   return (
-    <div>Content</div>
-  )
-}
+    <Box px='30px' py='30px'>
+      {children}
+    </Box>
+  );
+};
 
-export default Content
+export default Content;

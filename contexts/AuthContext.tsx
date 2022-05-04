@@ -1,51 +1,87 @@
-import Router from 'next/router';
-import { parseCookies, setCookie } from 'nookies';
-import { createContext, useEffect, useState } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import nookies, { destroyCookie, parseCookies } from 'nookies';
+import AsyncStorage from '@react-native-community/async-storage';
+import * as auth from '../services/auth';
 import { api } from '../services/api';
-import { recoverUserInformation, signInRequest } from '../services/auth';
+import { useRouter } from 'next/router';
 
-type User = { email: string; name: string; avatarUrl: string };
-type SignInType = { email: string; password: string };
-type AuthContextType = {
-  isAuthenticated: boolean;
+interface User {
+  name: string;
+  email: string;
+  avatarUrl: string;
+}
+
+interface AuthContextData {
+  signed: boolean;
   user: User | null;
-  signIn: (data: SignInType) => Promise<void>;
-};
-export const AuthContext = createContext({} as AuthContextType);
+  loading: boolean;
+  signIn(): Promise<void>;
+  signOut(): void;
+}
 
-export function AuthProvider({ children }: any) {
+const AuthContext = createContext<AuthContextData>({} as AuthContextData);
+
+const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null);
-
-  const isAuthenticated = !!user;
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    const { 'nextauth.token': token } = parseCookies();
-    if (token) {
-      recoverUserInformation().then(response => {
-        setUser(response.user);
-      });
+    function loadStorageData() {
+      const { ['@RNAuth:token']: token } = parseCookies();
+      const { ['@RNAuth:user']: userLocal } = parseCookies();
+
+      if (token && JSON.parse(userLocal)) {
+        setUser(JSON.parse(userLocal));
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      }
+
+      setLoading(false);
     }
+    loadStorageData();
   }, []);
 
-  async function signIn({ email, password }: SignInType) {
-    const { token, user } = await signInRequest({ email, password });
+  async function signIn() {
+    const response = await auth.signIn();
+    setUser(response.user);
 
-    setCookie(undefined, 'nextauth.token', token, {
-      maxAge: 60 * 60 * 1, //1 hora
+    api.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
+
+    nookies.set(undefined, '@RNAuth:user', JSON.stringify(response.user), {
+      maxAge: 30 * 24 * 60 * 60,
+    });
+    nookies.set(undefined, '@RNAuth:token', response.token, {
+      maxAge: 30 * 24 * 60 * 60,
     });
 
-    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-    setUser(user);
-    Router.push('/');
+    router.push('/');
   }
-  async function signUp({ email, password }: SignInType) {
-    Router.push('/login');
+
+  async function signOut() {
+    await auth.delay();
+    destroyCookie(null, '@RNAuth:token');
+    destroyCookie(null, '@RNAuth:user');
+    setUser(null);
+    router.push('login');
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
+    <AuthContext.Provider
+      value={{ signed: !!user, user, loading, signIn, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
+};
+
+function useAuth() {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider.');
+  }
+
+  return context;
 }
+
+export { AuthProvider, useAuth };

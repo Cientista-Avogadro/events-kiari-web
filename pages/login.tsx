@@ -8,29 +8,29 @@ import {
   Grid,
   Input,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import Image from 'next/image';
-import React, { useContext } from 'react';
+import React from 'react';
 import loginImage from '../assets/img/loginImage.png';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { AuthContext } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
+import { useRouter } from 'next/router';
+import { delay } from '../services/auth';
 
 const Login = () => {
   const { register, handleSubmit } = useForm();
-  const { signIn } = useContext(AuthContext);
-  const toast = useToast();
+  const { signIn, loading } = useAuth();
+  const router = useRouter();
 
   async function handleSignIn(data: any) {
-    await signIn(data);
-    toast({
-      position: 'top-right',
-      title: `Loging sucessfully`,
-      status: 'success',
-      isClosable: true,
-      duration: 1000,
-    });
+    await signIn();
+    await delay();
+    router.push('/');
+  }
+
+  if (router.isFallback) {
+    return <h1>careg</h1>;
   }
 
   return (
@@ -137,6 +137,7 @@ const Login = () => {
             _hover={{ backgroundColor: '#512DA8fa' }}
             type={'submit'}
             alignSelf={{ base: 'center', lg: '', md: 'flex-start' }}
+            isLoading={loading}
           >
             Entrar
           </Button>
