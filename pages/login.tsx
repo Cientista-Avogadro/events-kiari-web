@@ -14,7 +14,7 @@ import React from 'react';
 import loginImage from '../assets/img/loginImage.png';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../contexts/AuthContext';
+import { Ilogin, useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import { delay } from '../services/auth';
 
@@ -23,8 +23,8 @@ const Login = () => {
   const { signIn, loading } = useAuth();
   const router = useRouter();
 
-  async function handleSignIn(data: any) {
-    await signIn();
+  async function handleSignIn(data: Ilogin) {
+    await signIn(data);
     await delay();
     router.push('/');
   }
