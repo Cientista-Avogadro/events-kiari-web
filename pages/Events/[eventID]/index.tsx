@@ -29,13 +29,14 @@ import Content from "../../../components/Content";
 import React, {useEffect, useState} from "react";
 import {IinitialProps} from '../../../store';
 import {BiCalendarEvent, BiChevronLeft, BiChevronRight, BiEdit} from "react-icons/bi";
-import {AiFillEye, AiFillHeart, FaPlus, IoCubeSharp, MdOutlineGpsFixed, RiGpsFill} from "react-icons/all";
+import {AiFillEye, AiFillHeart} from "react-icons/ai";
+import {FaPlus} from "react-icons/fa";
+import {IoCubeSharp} from "react-icons/io5";
 import {BsThreeDots} from "react-icons/bs";
-import {ArrowBackIcon, ArrowForwardIcon, EditIcon, PlusSquareIcon} from "@chakra-ui/icons";
-import {MdDelete} from "react-icons/md";
+import {EditIcon} from "@chakra-ui/icons";
+import {MdDelete, MdOutlineGpsFixed} from "react-icons/md";
 import {VscRepoPush} from "react-icons/vsc";
 import {CustomChart} from "../../../components/Charts";
-import Link from "next/link";
 
 
 const Index: NextPage = () => {

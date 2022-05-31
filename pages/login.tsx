@@ -30,12 +30,12 @@ const Login = () => {
     async function handleSignIn() {
         await signIn();
         await delay();
-        router.push('/');
+        await router.push('/');
     }
 
     useEffect(() => {
         dispatch({type: 'set', rememberMe: rememberMe})
-    }, [rememberMe])
+    }, [rememberMe, dispatch])
 
 
     return (
