@@ -14,7 +14,7 @@ import React, {useEffect, useState} from 'react';
 import loginImage from '../assets/img/loginImage.png';
 import Link from 'next/link';
 import {useForm} from 'react-hook-form';
-import {Ilogin, useAuth} from '../contexts/AuthContext';
+import {useAuth} from '../contexts/AuthContext';
 import {useRouter} from 'next/router';
 import {delay} from '../services/auth';
 import {useDispatch, useSelector} from "react-redux";
@@ -27,8 +27,8 @@ const Login = () => {
     const dispatch = useDispatch();
 
 
-    async function handleSignIn(data: Ilogin) {
-        await signIn(data);
+    async function handleSignIn() {
+        await signIn();
         await delay();
         router.push('/');
     }
