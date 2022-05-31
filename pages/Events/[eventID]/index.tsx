@@ -1,0 +1,318 @@
+import type {NextPage} from 'next';
+import Head from 'next/head';
+import {useRouter} from "next/router";
+import {useSelector} from "react-redux";
+import {
+    Box,
+    Button,
+    Flex,
+    Grid,
+    Heading,
+    HStack,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Tag,
+    Text,
+    Tooltip,
+    Image,
+    Divider,
+    Table,
+    Thead,
+    Tr,
+    Th, Tbody, Td
+} from "@chakra-ui/react";
+import SideBar from "../../../components/SideBar";
+import NavBar from "../../../components/NavBar";
+import Content from "../../../components/Content";
+import React, {useEffect, useState} from "react";
+import {IinitialProps} from '../../../store';
+import {BiCalendarEvent, BiChevronLeft, BiChevronRight, BiEdit} from "react-icons/bi";
+import {AiFillEye, AiFillHeart, FaPlus, IoCubeSharp, MdOutlineGpsFixed, RiGpsFill} from "react-icons/all";
+import {BsThreeDots} from "react-icons/bs";
+import {ArrowBackIcon, ArrowForwardIcon, EditIcon, PlusSquareIcon} from "@chakra-ui/icons";
+import {MdDelete} from "react-icons/md";
+import {VscRepoPush} from "react-icons/vsc";
+import {CustomChart} from "../../../components/Charts";
+import Link from "next/link";
+
+
+const Index: NextPage = () => {
+    const isOpen = useSelector((state: IinitialProps) => state.isOpen);
+    const currentCard = useSelector((state: IinitialProps) => state.currentCard);
+    const router = useRouter();
+    const [close, setClose] = useState(false);
+
+
+    return (
+        <>
+            <Head>
+                <title>{currentCard?.title}</title>
+            </Head>
+            <Grid
+                h='100vh'
+                templateColumns={{
+                    base: 'auto',
+                    lg: !isOpen ? '260px auto' : '76px auto',
+                    md: !isOpen ? '260px auto' : '76px auto',
+                    sm: 'auto',
+                }}
+                templateRows='repeat(1, 1fr)'
+            >
+                <SideBar/>
+                <Flex flexDir={'column'}>
+                    <NavBar
+                        pathname={
+                            router
+                                .pathname
+                                .replace('/', '')
+                                .replace('[eventID]', currentCard ? currentCard?.title : '')}/>
+                    <Content>
+                        <Flex>
+                            <Box px='30px' py='30px' w={'100%'} display="flex" flexDir={'column'}>
+                                <Flex align="center" justifyContent={'space-between'} w={'100%'}>
+                                    <Flex>
+                                        <Heading size={'md'}>{currentCard?.title}</Heading>
+                                        <Tooltip label={currentCard?.id}>
+                                            <Box p='1'>
+                                                <Tag>ID {currentCard?.id.substring(0, 8)}</Tag>
+                                            </Box>
+                                        </Tooltip>
+                                    </Flex>
+                                    <Flex gap={'10px'}>
+                                        <Flex
+                                            display='flex'
+                                            alignItems={'center'}
+                                        >
+                                            <Text fontSize={'20px'}><AiFillHeart/></Text>
+                                            <Text>30</Text>
+                                        </Flex>
+                                        <Flex
+                                            display='flex'
+                                            alignItems={'center'}
+                                        >
+                                            <Text fontSize={'20px'}><AiFillEye/></Text>
+                                            <Text>30k</Text>
+                                        </Flex>
+                                        <Text fontSize={'20px'} display='flex'
+                                              alignItems={'center'}><BiEdit/>
+                                        </Text>
+                                        <Button
+                                            onClick={() => router.push(currentCard?.id + '/Reservas')}
+                                            leftIcon={<IoCubeSharp/>}
+                                            bgColor='rgba(81, 45, 168, 0.7)'
+                                            color={'#fff'}
+                                            _hover={{backGroundColor: '#512DA8'}}
+                                            _active={{backGroundColor: '#512DA8'}}
+                                        >
+                                            Reserva
+                                        </Button>
+                                        <Menu>
+                                            <MenuButton
+                                                transition='all 0.2s'
+                                                _focus={{boxShadow: 'none'}}
+                                                transform={'rotate(90deg)'}
+                                            >
+                                                <BsThreeDots/>
+                                            </MenuButton>
+                                            <MenuList bgColor={'#512DA8'} minW='120px' padding={0}>
+                                                <MenuItem display={'flex'} alignItems='center'>
+                                                    <HStack display={'flex'} alignItems='center'>
+                                                        <EditIcon/>
+                                                        <Text>Editar</Text>
+                                                    </HStack>
+                                                </MenuItem>
+                                                <MenuItem display={'flex'} alignItems='center'>
+                                                    <HStack display={'flex'} alignItems='center'>
+                                                        <MdDelete/>
+                                                        <Text>Eliminar</Text>
+                                                    </HStack>
+                                                </MenuItem>
+                                                <MenuItem display={'flex'} alignItems='center'>
+                                                    <HStack display={'flex'} alignItems='center'>
+                                                        <VscRepoPush/>
+                                                        <Text>Reservas</Text>
+                                                    </HStack>
+                                                </MenuItem>
+                                            </MenuList>
+                                        </Menu>
+
+                                    </Flex>
+                                </Flex>
+                                <Grid gridTemplateColumns={'repeat(2,1fr)'}
+                                      gridTemplateRows={'auto auto'}
+                                      columnGap={'10px'}
+                                >
+                                    <Image src={currentCard?.img} alt={'description card image'}/>
+                                    <Text>{currentCard?.description}</Text>
+                                    <Flex flexDir={'column'}>
+                                        <HStack display={'flex'} alignItems='center'>
+                                            <BiCalendarEvent/>
+                                            <Text fontSize={'16px'}>{currentCard?.data}</Text>
+                                        </HStack>
+                                        <HStack display={'flex'} alignItems='center' mb={'20px'}>
+                                            <MdOutlineGpsFixed/>
+                                            <Text fontSize={'16px'}>{currentCard?.localization}</Text>
+                                        </HStack>
+                                    </Flex>
+                                </Grid>
+                                <Divider backgroundColor="#C4C4C4" h={'2px'} width="98%" mb={'40px'}/>
+                                <Box>
+                                    <Heading size={'md'}>Preçário</Heading>
+                                    <Flex mb={'34px'} align="center" justify="space-between">
+                                        <Heading size={'sm'} fontWeight={'normal'} mt={'15px'} color={'#C5C7CD'}>Adicionar
+                                            Ingresso</Heading>
+                                        <Box backgroundColor={'#512DA8'} display={'flex'} alignItems={'center'}
+                                             justifyContent={'center'} p={'10px'} borderRadius={'5px'}
+                                             cursor={'pointer'}>
+                                            <FaPlus style={{
+                                                color: '#fff',
+                                                fontSize: '15px'
+                                            }}/>
+                                        </Box>
+                                    </Flex>
+                                    <Table>
+                                        <Thead borderBottom={'2px solid #DFE0EB'}>
+                                            <Tr>
+                                                <Th color={'#9FA2B4'}>Ingresso</Th>
+                                                <Th color={'#9FA2B4'}>Preço</Th>
+                                                <Th color={'#9FA2B4'}>Descrição</Th>
+                                            </Tr>
+                                        </Thead>
+                                        <Tbody>
+                                            <Tr borderBottom={'1.1px solid #DFE0EB'}>
+                                                <Td>Preço Individual</Td>
+                                                <Td>2.000 kz</Td>
+                                                <Td>Sem descrição</Td>
+                                                <Td textAlign={'right'}>
+                                                    <Menu>
+                                                        <MenuButton
+                                                            transition='all 0.2s'
+                                                            _focus={{boxShadow: 'none'}}
+                                                            transform={'rotate(90deg)'}
+                                                        >
+                                                            <BsThreeDots/>
+                                                        </MenuButton>
+                                                        <MenuList bgColor={'#512DA8'} minW='120px' padding={0}>
+                                                            <MenuItem display={'flex'} alignItems='center'>
+                                                                <HStack display={'flex'} alignItems='center'>
+                                                                    <EditIcon/>
+                                                                    <Text>Editar</Text>
+                                                                </HStack>
+                                                            </MenuItem>
+                                                            <MenuItem display={'flex'} alignItems='center'>
+                                                                <HStack display={'flex'} alignItems='center'>
+                                                                    <MdDelete/>
+                                                                    <Text>Eliminar</Text>
+                                                                </HStack>
+                                                            </MenuItem>
+                                                            <MenuItem display={'flex'} alignItems='center'>
+                                                                <HStack display={'flex'} alignItems='center'>
+                                                                    <VscRepoPush/>
+                                                                    <Text>Reservas</Text>
+                                                                </HStack>
+                                                            </MenuItem>
+                                                        </MenuList>
+                                                    </Menu>
+                                                </Td>
+                                            </Tr>
+                                        </Tbody>
+                                    </Table>
+                                </Box>
+                            </Box>
+                            <Box
+                                backgroundColor={'#F4F4F4'}
+                                p={!close ? '0' : '14px'}
+                                width={!close ? '0' : ''}
+                            >
+                                <Grid gap={'4px'} templateColumns='repeat(3, 1fr)'>
+                                    <Box bgColor={'#fff'} w={'110px'} h={'65px'} display={'flex'} flexDir={'column'}
+                                         alignItems='center'
+                                         border={'1px solid #492F86'}
+                                         cursor='pointer'
+                                         justifyContent='center'
+                                         borderRadius={'8'}
+                                    >
+                                        <Text>Reservas</Text>
+                                        <Text fontWeight={'bold'}>60</Text>
+                                    </Box>
+                                    <Box bgColor={'#fff'} w={'110px'} h={'65px'} display={'flex'} flexDir={'column'}
+                                         alignItems='center'
+                                         border={'1px solid #492F86'}
+                                         cursor='pointer'
+                                         justifyContent='center'
+                                         borderRadius={'8'}
+                                    >
+                                        <Text>Reservas</Text>
+                                        <Text fontWeight={'bold'}>60</Text>
+                                    </Box><Box bgColor={'#fff'} w={'110px'} h={'65px'} display={'flex'}
+                                               flexDir={'column'}
+                                               alignItems='center'
+                                               border={'1px solid #492F86'}
+                                               cursor='pointer'
+                                               justifyContent='center'
+                                               borderRadius={'8'}
+                                >
+                                    <Text>Reservas</Text>
+                                    <Text fontWeight={'bold'}>60</Text>
+                                </Box>
+                                </Grid>
+                                <CustomChart/>
+                                <Flex align="center" position={'relative'}>
+                                    <Box style={{
+                                        backgroundColor: '#512DA8',
+                                        borderRadius: '100%',
+                                        color: '#fff',
+                                        padding: '10px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        position: 'absolute',
+                                        left: '-30px',
+                                        zIndex: '10',
+                                        cursor: 'pointer',
+                                        top: !close ? '-30vh' : ''
+                                    }}
+                                         onClick={() => setClose(!close)}
+                                         title={!close ? 'open lateral box' : 'close lateral box'}
+                                    >
+                                        {
+                                            close ?
+                                                <BiChevronRight style={{
+                                                    color: '#fff',
+                                                    fontSize: '28px'
+                                                }}/>
+                                                :
+                                                <BiChevronLeft style={{
+                                                    color: '#fff',
+                                                    fontSize: '28px'
+                                                }}/>
+                                        }
+
+                                    </Box>
+
+                                    <Divider backgroundColor="#C4C4C4" h={'2px'} width="98%"/>
+
+                                </Flex>
+                                {
+                                    close && <Box mt={'20px'}>
+                                        <Heading size={'md'} display="flex" justifyContent={'center'} alignItems={'center'}
+                                                 alignSelf={'center'}>Localização
+                                            no
+                                            Mapa</Heading>
+
+                                    </Box>
+                                }
+
+                            </Box>
+                        </Flex>
+                    </Content>
+                </Flex>
+            </Grid>
+        </>
+
+    );
+}
+
+export default Index;

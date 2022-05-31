@@ -2,6 +2,9 @@ interface ISignIn {
   token: string;
   user: { name: string; email: string; avatarUrl: string };
 }
+
+
+
 export const delay = (amount = 750) =>
   new Promise(resolve => setTimeout(resolve, amount));
 export async function signIn(): Promise<ISignIn> {

@@ -1,22 +1,32 @@
-import { configureStore } from '@reduxjs/toolkit';
+import {configureStore} from '@reduxjs/toolkit';
+import {ICardProps} from './services/Card';
 
-const initialState = {
-  isOpen: true,
-  cardDatas: [],
+export interface IinitialProps {
+    isOpen?: boolean
+    cardDatas?: [],
+    currentCard?: ICardProps | null
+    rememberMe: boolean
+}
+
+const initialState: IinitialProps = {
+    isOpen: true,
+    cardDatas: [],
+    currentCard: null,
+    rememberMe: false
 };
 
 interface stateStore {
-  type: string;
+    type: string;
 }
 
-const changeState = (state = initialState, { type, ...rest }: stateStore) => {
-  switch (type) {
-    case 'set':
-      return { ...state, ...rest };
-    default:
-      return state;
-  }
+const changeState = (state = initialState, {type, ...rest}: stateStore) => {
+    switch (type) {
+        case 'set':
+            return {...state, ...rest};
+        default:
+            return state;
+    }
 };
 
-const store = configureStore({ reducer: changeState });
+const store = configureStore({reducer: changeState});
 export default store;
