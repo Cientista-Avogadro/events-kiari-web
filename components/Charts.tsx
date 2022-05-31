@@ -1,6 +1,6 @@
 import {Box, Text} from "@chakra-ui/react";
 import {Chart as ChartJS, registerables} from 'chart.js';
-import {Line, Scatter} from "react-chartjs-2";
+import {Line} from "react-chartjs-2";
 import {useSelector} from "react-redux";
 import {IinitialProps} from "../store";
 
