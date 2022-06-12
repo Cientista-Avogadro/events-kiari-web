@@ -29,12 +29,13 @@ import Content from "../../../components/Content";
 import React, {useEffect, useState} from "react";
 import {IinitialProps} from '../../../store';
 import {BiCalendarEvent, BiChevronLeft, BiChevronRight, BiEdit, BiFilter} from "react-icons/bi";
-import {AiFillEye, AiFillHeart, FaPlus, IoCubeSharp, MdOutlineGpsFixed, RiGpsFill} from "react-icons/all";
+
 import {BsThreeDots} from "react-icons/bs";
 import {ArrowBackIcon, ArrowForwardIcon, EditIcon, PlusSquareIcon, SearchIcon} from "@chakra-ui/icons";
 import {MdDelete} from "react-icons/md";
 import {VscRepoPush} from "react-icons/vsc";
 import {CustomChart} from "../../../components/Charts";
+import { AiFillEye, AiFillHeart } from 'react-icons/ai';
 
 
 const Reservas: NextPage = () => {
