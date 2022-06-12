@@ -1,6 +1,5 @@
 import React, {createContext, useState, useEffect, useContext} from 'react';
 import nookies, {destroyCookie, parseCookies} from 'nookies';
-import AsyncStorage from '@react-native-community/async-storage';
 import * as auth from '../services/auth';
 import {api} from '../services/api';
 import {useRouter} from 'next/router';
@@ -22,7 +21,7 @@ interface AuthContextData {
     user: User | null;
     loading: boolean;
 
-    signIn(data: Ilogin): Promise<void>;
+    signIn(): Promise<void>;
 
     signOut(): void;
 }
@@ -52,34 +51,30 @@ const AuthProvider = ({children}: any) => {
         loadStorageData();
     }, []);
 
-    async function signIn(data: Ilogin) {
-        if (!data) {
-            router.push('/login');
-            return;
-        } else {
-            try {
-                const response = await auth.signIn();
-                setUser(response.user);
-                if (!rember) {
-                    api.defaults.headers.common[
-                        'Authorization'
-                        ] = `Bearer ${response.token}`;
-                    sessionStorage.setItem('@RNAuth:token', response.token)
-                    sessionStorage.setItem('@RNAuth:user', JSON.stringify(response.user))
-                }
+    async function signIn() {
+
+        try {
+            const response = await auth.signIn();
+            setUser(response.user);
+            if (!rember) {
                 api.defaults.headers.common[
                     'Authorization'
                     ] = `Bearer ${response.token}`;
-                nookies.set(undefined, '@RNAuth:token', response.token, {
-                    maxAge: 30 * 24 * 60 * 60,
-                });
-                nookies.set(undefined, '@RNAuth:user', JSON.stringify(response.user), {
-                    maxAge: 30 * 24 * 60 * 60,
-                });
-                router.push('/');
-            } catch (error) {
-                console.log('error', error);
+                sessionStorage.setItem('@RNAuth:token', response.token)
+                sessionStorage.setItem('@RNAuth:user', JSON.stringify(response.user))
             }
+            api.defaults.headers.common[
+                'Authorization'
+                ] = `Bearer ${response.token}`;
+            nookies.set(undefined, '@RNAuth:token', response.token, {
+                maxAge: 30 * 24 * 60 * 60,
+            });
+            nookies.set(undefined, '@RNAuth:user', JSON.stringify(response.user), {
+                maxAge: 30 * 24 * 60 * 60,
+            });
+            await router.push('/');
+        } catch (error) {
+            console.log('error', error);
         }
     }
 
