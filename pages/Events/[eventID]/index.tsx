@@ -37,11 +37,11 @@ import {EditIcon} from "@chakra-ui/icons";
 import {MdDelete, MdOutlineGpsFixed} from "react-icons/md";
 import {VscRepoPush} from "react-icons/vsc";
 import {CustomChart} from "../../../components/Charts";
+import {CustomCircularProgesss} from "../../../components/CustomCircularProgesss";
 
 
 const Index: NextPage = () => {
-    const isOpen = useSelector((state: IinitialProps) => state.isOpen);
-    const currentCard = useSelector((state: IinitialProps) => state.currentCard);
+    const {isOpen, currentCard, loading} = useSelector((state: IinitialProps) => state);
     const router = useRouter();
     const [close, setClose] = useState(false);
 
@@ -70,6 +70,7 @@ const Index: NextPage = () => {
                                 .replace('/', '')
                                 .replace('[eventID]', currentCard ? currentCard?.title : '')}/>
                     <Content>
+                        {loading && <CustomCircularProgesss/>}
                         <Flex>
                             <Box px='30px' py='30px' w={'100%'} display="flex" flexDir={'column'}>
                                 <Flex align="center" justifyContent={'space-between'} w={'100%'}>

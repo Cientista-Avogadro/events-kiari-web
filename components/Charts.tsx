@@ -1,11 +1,20 @@
 import {Box, Text} from "@chakra-ui/react";
-import {Chart as ChartJS, registerables} from 'chart.js';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+  } from 'chart.js';
 import {Line} from "react-chartjs-2";
 import {useSelector} from "react-redux";
 import {IinitialProps} from "../store";
 
-ChartJS.register(...registerables);
 
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export const options = {
     responsive: true,

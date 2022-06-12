@@ -5,14 +5,16 @@ export interface IinitialProps {
     isOpen?: boolean
     cardDatas?: [],
     currentCard?: ICardProps | null
-    rememberMe: boolean
+    rememberMe: boolean,
+    loading?: boolean
 }
 
 const initialState: IinitialProps = {
     isOpen: true,
     cardDatas: [],
     currentCard: null,
-    rememberMe: false
+    rememberMe: false,
+    loading: false
 };
 
 interface stateStore {

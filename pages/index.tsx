@@ -9,12 +9,8 @@ import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
 
 const Home: NextPage = () => {
-    const router = useRouter();
     const isOpen = useSelector((state: any) => state.isOpen);
 
-    if (router.isFallback) {
-        return <h1>loading</h1>;
-    }
 
     return (
         <Grid
