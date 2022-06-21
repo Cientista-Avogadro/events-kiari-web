@@ -48,13 +48,14 @@ export const Card = ({item, boxProps}: ICard) => {
             }
             transition={'transform 0.3s ease-out'}
             _hover={{
-                transform: 'scale(1.1)'
+                transform: 'scale(1.02)'
             }}
             cursor='pointer'
+            boxShadow={'10px 10px 18px 0px rgba(0,0,0,0.08)'}
         >
-            <Image src={item.img} maxW='145px' alt='events description'/>
+            <Image src={item.img} borderRadius={'10px'} maxW='145px' alt='events description'/>
             <Flex flexDir={'column'} py='5px' gap={'5px'}>
-                <Text fontSize={'17px'} title={item.title} isTruncated maxW={'90%'}>
+                <Text fontSize={'17px'} title={item.title} maxW={'90%'}>
                     {item.title}
                 </Text>
                 <HStack display={'flex'} alignItems='center'>
