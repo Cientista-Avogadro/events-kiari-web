@@ -29,19 +29,19 @@ import NavBar from '../../components/NavBar';
 import SideBar from '../../components/SideBar';
 import { Card } from '../../components/Card';
 import Head from 'next/head';
-import { cardDatas } from '../../services/Card';
 import { useEffect, useState } from 'react';
+import { IinitialProps } from '../../store';
 
 const Index: NextPage = () => {
-  const isOpen = useSelector((state: any) => state.isOpen);
+  const { isOpen, cardDatas } = useSelector((state: IinitialProps) => state);
   const router = useRouter();
   const [close, setClose] = useState(true);
   const [selected, setSelected] = useState('');
   const [searched, setSearched] = useState('');
-  const [lenght, setLenght] = useState(cardDatas.length);
+  const [lenght, setLenght] = useState(cardDatas?.length);
 
   const arrayPrivate = cardDatas
-    .filter(item => item.type.includes(selected))
+    ?.filter(item => item.type.includes(selected))
     .filter(item => item.title.includes(searched))
     .map(item => item);
 
@@ -113,7 +113,7 @@ const Index: NextPage = () => {
                           onChange={e => setSelected(e.toString())}
                         >
                           <MenuItemOption value={''}>Nenhum</MenuItemOption>
-                          {cardDatas.map(types => (
+                          {cardDatas?.map(types => (
                             <MenuItemOption key={types.id} value={types.buyied}>
                               {types.buyied}
                             </MenuItemOption>
@@ -132,10 +132,18 @@ const Index: NextPage = () => {
                       width={''}
                     >
                       {cardDatas
-                        .filter(item => item.buyied.includes(selected))
+                        ?.filter(
+                          item =>
+                            item?.buyied && item?.buyied.includes(selected)
+                        )
                         .filter(item => item.title.includes(searched))
-                        .map(item => (
-                          <Card key={item.id} item={item} isReserved={true} />
+                        .map((item, index) => (
+                          <Card
+                            key={item?.id}
+                            item={item}
+                            isReserved={true}
+                            index={index}
+                          />
                         ))}
                     </SimpleGrid>
                   </Flex>
