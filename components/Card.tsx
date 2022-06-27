@@ -12,6 +12,7 @@ import {
   Tag,
   Text,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
 import { useRouter } from 'next/router';
@@ -20,24 +21,55 @@ import { BsThreeDots } from 'react-icons/bs';
 import { ImPriceTags } from 'react-icons/im';
 import { MdDelete } from 'react-icons/md';
 import { VscRepoPush } from 'react-icons/vsc';
-import { ICardProps } from '../services/Card';
 import { useDispatch, useSelector } from 'react-redux';
+import { ICardProps } from '../types/events.type';
+import { deleteEvent } from '../helpers/EventCrud';
+import { IinitialProps } from '../store';
 
 interface ICard {
   boxProps?: BoxProps;
   item: ICardProps;
   isReserved?: boolean;
+  index: number;
 }
 
-export const Card = ({ item, boxProps, isReserved }: ICard) => {
+export const Card = ({ item, boxProps, isReserved, index }: ICard) => {
   const dispatch = useDispatch();
+  const { cardDatas } = useSelector((state: IinitialProps) => state);
   const router = useRouter();
+  const toast = useToast();
 
   const getColorStatus = (status: string): string => {
     if (status === 'pendente') return '#F12B2C';
     if (status === 'em análise') return '#FEC400';
     if (status === 'pago') return '#29CC97';
     return '';
+  };
+
+  const handleDelete = () => {
+    if (item) {
+      deleteEvent(item?.id)
+        .then(res => {
+          console.log(item?.id);
+          cardDatas?.splice(index, 1);
+          toast({
+            title: 'evento apagado com Sucesso.',
+            description: 'Nós deletamos seus dados.',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
+        })
+        .catch(err =>
+          toast({
+            title: 'erro ao apagar um vento',
+            description: err,
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+          })
+        );
+    }
   };
 
   return (
@@ -48,14 +80,11 @@ export const Card = ({ item, boxProps, isReserved }: ICard) => {
       position='relative'
       borderRadius={'10px'}
       {...boxProps}
-      onClick={() => {
+      onDoubleClick={() => {
         dispatch({ type: 'set', currentCard: item });
         router.push('Events/'.concat(item.id));
       }}
       transition={'transform 0.3s ease-out'}
-      _hover={{
-        transform: 'scale(1.02)',
-      }}
       cursor='pointer'
       boxShadow={'10px 10px 18px 0px rgba(0,0,0,0.08)'}
     >
@@ -66,12 +95,12 @@ export const Card = ({ item, boxProps, isReserved }: ICard) => {
         alt='events description'
       />
       <Flex flexDir={'column'} py='5px' gap={'5px'}>
-        <Text fontSize={'17px'} title={item.title} maxW={'90%'}>
+        <Text fontSize={'17px'} title={item.title} maxW={'100%'}>
           {item.title}
         </Text>
         <HStack display={'flex'} alignItems='center'>
           <ImPriceTags />
-          <Text>{item.price}</Text>
+          <Text>2000 kz</Text>
         </HStack>
         <HStack display={'flex'} alignItems='center' mb={'20px'}>
           <BiCalendarEvent />
@@ -90,14 +119,14 @@ export const Card = ({ item, boxProps, isReserved }: ICard) => {
                 <Tag>{item.type}</Tag>
               </Box>
             </Tooltip>
-            <Tooltip label={item.buyied}>
+            <Tooltip label={'pago'}>
               <Box p='1'>
                 <Tag
-                  bgColor={getColorStatus(item.buyied)}
+                  bgColor={getColorStatus('pago')}
                   color='#fff'
                   textTransform='capitalize'
                 >
-                  {item.buyied}
+                  pago
                 </Tag>
               </Box>
             </Tooltip>
@@ -112,7 +141,6 @@ export const Card = ({ item, boxProps, isReserved }: ICard) => {
           top={'10px'}
           right='10px'
           pointerEvents={'stroke'}
-          zIndex='99999'
         >
           <BsThreeDots />
         </MenuButton>
@@ -123,7 +151,7 @@ export const Card = ({ item, boxProps, isReserved }: ICard) => {
               <Text>Editar</Text>
             </HStack>
           </MenuItem>
-          <MenuItem display={'flex'} alignItems='center'>
+          <MenuItem display={'flex'} alignItems='center' onClick={handleDelete}>
             <HStack display={'flex'} alignItems='center'>
               <MdDelete />
               <Text>Eliminar</Text>
