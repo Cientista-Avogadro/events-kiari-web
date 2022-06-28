@@ -12,24 +12,35 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { VscSignOut } from 'react-icons/vsc';
 import { useDispatch, useSelector } from 'react-redux';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import { useAuth } from '../contexts/AuthContext';
+import { auth, logout } from '../firebase';
+import { useRouter } from 'next/router';
 
 interface NavBarProps {
   pathname: string;
 }
 
 const NavBar = ({ pathname }: NavBarProps) => {
-  const { user, signOut } = useAuth();
+  const [user, loading, error] = useAuthState(auth);
+  const router = useRouter();
   const dispatch = useDispatch();
   const isOpen = useSelector((state: any) => state.isOpen);
 
   const handleSignOut = () => {
-    signOut();
+    logout();
   };
 
+  useEffect(() => {
+    if (loading) {
+      // maybe trigger a loading screen
+      return;
+    }
+    if (!user) router.push('/login');
+  }, [user, loading, router]);
   return (
     <Flex
       align={'center'}
@@ -71,13 +82,13 @@ const NavBar = ({ pathname }: NavBarProps) => {
           display={{ base: 'none', lg: 'initial', md: 'initial' }}
         />
         <Text display={{ base: 'none', lg: 'initial', md: 'initial' }}>
-          {user?.name}
+          {user?.displayName}
         </Text>
         <Menu>
           <MenuButton as={Stack} direction='row' spacing={4} cursor={'pointer'}>
             <Avatar
-              src={user?.avatarUrl}
-              name={user?.name}
+              src={user?.photoURL ? user?.photoURL : ''}
+              name={user?.displayName ? user?.displayName : ''}
               cursor='pointer'
               size={'sm'}
             />
@@ -89,7 +100,7 @@ const NavBar = ({ pathname }: NavBarProps) => {
                 textTransform='capitalize'
                 color={'ActiveCaption'}
               >
-                {user?.name}
+                {user?.displayName}
               </Text>
               <MenuItem>Minha Conta</MenuItem>
               <MenuItem>Pagamentos </MenuItem>

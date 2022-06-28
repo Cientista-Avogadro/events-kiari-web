@@ -12,6 +12,7 @@ import {
   Tag,
   Text,
   Tooltip,
+  useDisclosure,
   useToast,
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
@@ -23,21 +24,22 @@ import { MdDelete } from 'react-icons/md';
 import { VscRepoPush } from 'react-icons/vsc';
 import { useDispatch, useSelector } from 'react-redux';
 import { ICardProps } from '../types/events.type';
-import { deleteEvent } from '../helpers/EventCrud';
 import { IinitialProps } from '../store';
+import { deleteEvent } from '../helpers/EventCrud';
+import { ModalForm } from './ModalForm';
+import { ModalFormEdit } from './ModalFormEdit';
 
 interface ICard {
   boxProps?: BoxProps;
   item: ICardProps;
   isReserved?: boolean;
-  index: number;
 }
 
-export const Card = ({ item, boxProps, isReserved, index }: ICard) => {
+export const Card = ({ item, boxProps, isReserved }: ICard) => {
   const dispatch = useDispatch();
-  const { cardDatas } = useSelector((state: IinitialProps) => state);
   const router = useRouter();
   const toast = useToast();
+  const { isOpen: open, onOpen, onClose } = useDisclosure();
 
   const getColorStatus = (status: string): string => {
     if (status === 'pendente') return '#F12B2C';
@@ -48,10 +50,8 @@ export const Card = ({ item, boxProps, isReserved, index }: ICard) => {
 
   const handleDelete = () => {
     if (item) {
-      deleteEvent(item?.id)
+      deleteEvent(item.id)
         .then(res => {
-          console.log(item?.id);
-          cardDatas?.splice(index, 1);
           toast({
             title: 'evento apagado com Sucesso.',
             description: 'Nós deletamos seus dados.',
@@ -60,15 +60,15 @@ export const Card = ({ item, boxProps, isReserved, index }: ICard) => {
             isClosable: true,
           });
         })
-        .catch(err =>
+        .catch(error => {
           toast({
-            title: 'erro ao apagar um vento',
-            description: err,
+            title: 'erro ao apagar o evento.',
+            description: error,
             status: 'error',
             duration: 3000,
             isClosable: true,
-          })
-        );
+          });
+        });
     }
   };
 
@@ -145,12 +145,18 @@ export const Card = ({ item, boxProps, isReserved, index }: ICard) => {
           <BsThreeDots />
         </MenuButton>
         <MenuList bgColor={'#512DA8'} minW='120px' padding={0}>
-          <MenuItem display={'flex'} alignItems='center'>
+          <MenuItem display={'flex'} alignItems='center' onClick={onOpen}>
             <HStack display={'flex'} alignItems='center'>
               <EditIcon />
               <Text>Editar</Text>
             </HStack>
           </MenuItem>
+          <ModalFormEdit
+            onClose={onClose}
+            onOpen={onOpen}
+            open={open}
+            item={item}
+          />
           <MenuItem display={'flex'} alignItems='center' onClick={handleDelete}>
             <HStack display={'flex'} alignItems='center'>
               <MdDelete />

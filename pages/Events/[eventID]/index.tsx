@@ -60,7 +60,6 @@ import { VscRepoPush } from 'react-icons/vsc';
 import { CustomChart } from '../../../components/Charts';
 import { CustomCircularProgesss } from '../../../components/CustomCircularProgesss';
 import { format } from 'date-fns';
-import { Maps } from '../../../components/Maps';
 
 type Inputs = {
   name: string;
@@ -485,7 +484,7 @@ const Index: NextPage = () => {
                     >
                       Localização no Mapa
                     </Heading>
-                    <Maps style={{ width: '100%', height: '250px' }} />
+                    Sem Dados
                   </Box>
                 )}
               </Box>

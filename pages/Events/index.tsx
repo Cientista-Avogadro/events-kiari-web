@@ -43,10 +43,10 @@ import { Card } from '../../components/Card';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
-import { getAllEvents } from '../../helpers/EventCrud';
 import { ICardProps } from '../../types/events.type';
 import { IinitialProps } from '../../store';
 import { ModalForm } from '../../components/ModalForm';
+import { getAllEvents } from '../../helpers/EventCrud';
 
 const Index: NextPage = () => {
   const [publicPageNumber, setPublicPageNumber] = useState(0);
@@ -70,32 +70,40 @@ const Index: NextPage = () => {
   const publicPagesVisited = publicPageNumber * usersPerPage;
   const privatePagesVisited = privatePageNumber * usersPerPage;
 
-  const arrayPublic = cardDatas
-    ?.filter(({ state }) => state.includes(selected))
-    .filter(({ title }) => title.includes(searched))
-    .slice(publicPagesVisited, publicPagesVisited + usersPerPage)
-    .filter(({ state }) => state == 'public');
+  const [arrayPublic, setArrayPublic] = useState<ICardProps[]>([]);
+  const [arrayPrivate, setArrayPrivate] = useState<ICardProps[]>([]);
+  const [data, setData] = useState<ICardProps[]>([]);
 
-  const arrayPrivate = cardDatas
-    ?.filter(({ state }) => state.includes(selected))
-    .filter(({ title }) => title.includes(searched))
-    .slice(privatePagesVisited, privatePagesVisited + usersPerPage)
-    .filter(({ state }) => state == 'private');
-
-  const publicPageCount = Math.ceil(
-    currentPublicItems ? currentPublicItems?.length : 0 / usersPerPage
-  );
-  const privatePageCount = Math.ceil(
-    currentPrivateItems ? currentPrivateItems?.length : 0 / usersPerPage
-  );
+  const publicPageCount = Math.ceil(arrayPublic?.length / usersPerPage);
+  const privatePageCount = Math.ceil(arrayPrivate?.length / usersPerPage);
 
   useEffect(() => {
     getAllEvents().then((res: ICardProps[]) => {
+      setData(res);
       dispatch({ type: 'set', cardDatas: res });
     });
-    setCurrentPublicItems(arrayPublic?.slice(0, 50));
-    setCurrentPrivateItems(arrayPrivate?.slice(0, 50));
-  }, [dispatch, arrayPublic, arrayPrivate]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (data) {
+      setArrayPublic(data?.filter(item => item.state === 'public'));
+      setArrayPrivate(data?.filter(item => item.state === 'private'));
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (arrayPublic) {
+      setCurrentPublicItems(arrayPublic?.slice(0, 50));
+    }
+  }, [arrayPublic]);
+
+  useEffect(() => {
+    if (arrayPrivate) {
+      setCurrentPrivateItems(arrayPrivate?.slice(0, 50));
+    }
+  }, [arrayPrivate]);
+
+  console.log(arrayPublic);
 
   return (
     <>
@@ -183,27 +191,45 @@ const Index: NextPage = () => {
                     onClose={onClose}
                     onOpen={onOpen}
                     open={open}
-                    type='add'
                   />
                 </Flex>
               </Flex>
               <Flex gap='30px' flexDir={'column'}>
                 <Flex flexDir={'column'} rowGap='30px'>
-                  <Text>Eventos Públicos ({arrayPublic?.length})</Text>
+                  <Text>
+                    Eventos Públicos (
+                    {
+                      currentPublicItems
+                        ?.filter(({ state }) => state === 'public')
+                        ?.slice(
+                          publicPagesVisited,
+                          publicPagesVisited + usersPerPage
+                        )
+                        .filter(({ title }) =>
+                          title.includes(searched.toLowerCase())
+                        )?.length
+                    }
+                    )
+                  </Text>
                   <SimpleGrid
                     spacing={'12px'}
                     gridTemplateColumns='repeat(3, 1fr)'
                   >
                     {currentPublicItems
                       ?.filter(({ state }) => state.includes(selected))
-                      .filter(({ title }) => title.includes(searched))
+                      .filter(({ title }) =>
+                        title.includes(searched.toLowerCase())
+                      )
                       .slice(
                         publicPagesVisited,
                         publicPagesVisited + usersPerPage
                       )
-                      .map((item, index) => (
-                        <Card key={item.id} item={item} index={index} />
-                      ))}
+                      .map(
+                        item =>
+                          item?.state === 'public' && (
+                            <Card key={item.id} item={item} />
+                          )
+                      )}
                   </SimpleGrid>
                   <Flex align={'center'} justify='center'>
                     <ReactPaginate
@@ -222,21 +248,40 @@ const Index: NextPage = () => {
                   </Flex>
                 </Flex>
                 <Flex flexDir={'column'} rowGap='30px'>
-                  <Text>Eventos Privados ({arrayPrivate?.length})</Text>
+                  <Text>
+                    Eventos Privados (
+                    {
+                      currentPrivateItems
+                        ?.filter(({ state }) => state === 'private')
+                        ?.slice(
+                          privatePagesVisited,
+                          privatePagesVisited + usersPerPage
+                        )
+                        ?.filter(({ title }) =>
+                          title.includes(searched.toLowerCase())
+                        )?.length
+                    }
+                    )
+                  </Text>
                   <SimpleGrid
                     spacing={'12px'}
                     gridTemplateColumns='repeat(3, 1fr)'
                   >
                     {currentPrivateItems
                       ?.filter(({ state }) => state.includes(selected))
-                      .filter(({ title }) => title.includes(searched))
+                      .filter(({ title }) =>
+                        title.includes(searched.toLowerCase())
+                      )
                       .slice(
                         privatePagesVisited,
                         privatePagesVisited + usersPerPage
                       )
-                      .map((item, index) => (
-                        <Card key={item.id} item={item} index={index} />
-                      ))}
+                      .map(
+                        item =>
+                          item?.state === 'private' && (
+                            <Card key={item.id} item={item} />
+                          )
+                      )}
                   </SimpleGrid>
                   <Flex align={'center'} justify='center'>
                     <ReactPaginate

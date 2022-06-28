@@ -10,9 +10,14 @@ import { DashCard, IDashCard } from '../components/DashCard';
 import { DoughnutCharts } from '../components/DoughnutCharts';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase';
+import { useEffect } from 'react';
 
 const Home: NextPage = () => {
   const isOpen = useSelector((state: any) => state.isOpen);
+  const [user, loading, error] = useAuthState(auth);
+  const router = useRouter();
 
   const dashCards: IDashCard[] = [
     {
@@ -44,6 +49,14 @@ const Home: NextPage = () => {
       percentage: -12,
     },
   ];
+
+  useEffect(() => {
+    if (loading) {
+      // maybe trigger a loading screen
+      return;
+    }
+    if (!user) router.push('/login');
+  }, [user, loading, router]);
 
   return (
     <Grid
@@ -89,23 +102,6 @@ const Home: NextPage = () => {
       </Flex>
     </Grid>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async ctx => {
-  const { ['@RNAuth:token']: token } = parseCookies(ctx);
-  const { ['@RNAuth:user']: user } = parseCookies(ctx);
-  if (!token || !user) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
 };
 
 export default Home;

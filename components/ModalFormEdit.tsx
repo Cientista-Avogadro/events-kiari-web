@@ -24,7 +24,7 @@ import { BiImageAdd } from 'react-icons/bi';
 import { MdDelete } from 'react-icons/md';
 import { useSelector } from 'react-redux';
 import { uuid } from 'uuidv4';
-import { createNewEvent } from '../helpers/EventCrud';
+import { createNewEvent, editEvent } from '../helpers/EventCrud';
 import { IinitialProps } from '../store';
 import { ICardProps } from '../types/events.type';
 
@@ -55,7 +55,7 @@ interface IModalForm {
   item?: ICardProps;
 }
 
-export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
+export const ModalFormEdit = ({ onClose, onOpen, open, item }: IModalForm) => {
   const { cardDatas: cv } = useSelector((state: IinitialProps) => state);
   const [getImage, setGetImage] = useState('');
   const toast = useToast();
@@ -73,11 +73,11 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
   };
 
   const onSubmit: SubmitHandler<Inputs> = data => {
-    if (data) {
-      createNewEvent({ ...data, id: uuid(), img: getImage })
+    if (data && item) {
+      editEvent(item?.id, { ...data, img: getImage })
         .then(() => {
           toast({
-            title: 'evento criado com Sucesso.',
+            title: 'evento Editado com Sucesso.',
             description: 'Nós um evento para ti.',
             status: 'success',
             duration: 3000,
@@ -86,7 +86,7 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
         })
         .catch(error =>
           toast({
-            title: 'error ao criar evento.',
+            title: 'error ao editar evento.',
             description: 'Nós um evento para ti.',
             status: 'success',
             duration: 3000,
@@ -102,7 +102,7 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Adicionar Evento</ModalHeader>
+          <ModalHeader>Editar Evento</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody pb={6}>
@@ -110,6 +110,7 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
               <Box h='calc(170px + 7px + 30px)'>
                 <Image
                   src={
+                    item?.img ||
                     getImage ||
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ4Sysqd0TeyF91ln8xcnUNGJzv3oCDX7s1LQ&usqp=CAU'
                   }
@@ -149,13 +150,6 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
                     <BiImageAdd color={'white'} />
                     Carregar...
                   </label>
-                  <Flex flexDir={'column'}>
-                    <Text>Or Paste Url</Text>
-                    <Input
-                      type={'url'}
-                      onChange={({ target }) => setGetImage(target.value)}
-                    />
-                  </Flex>
                   <Input
                     type='file'
                     accept='image/jpg,image/png,image/jpeg,image/svg,image/gif'
@@ -171,6 +165,13 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
                   />
                   <MdDelete onClick={() => setGetImage('')} />
                 </Flex>
+                <Flex flexDir={'column'}>
+                  <Text>Or Paste Url</Text>
+                  <Input
+                    type={'url'}
+                    onChange={({ target }) => setGetImage(target.value)}
+                  />
+                </Flex>
               </Box>
               <Flex flexDir='column' gap='20px' ml={'50px'}>
                 <Flex gap={'10px'}>
@@ -179,9 +180,10 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
                     <Input
                       aria-invalid={errors.title ? 'true' : 'false'}
                       placeholder='Titulo do Evento'
+                      defaultValue={item?.title}
                       {...register('title', {
                         required: true,
-                        minLength: 1,
+                        minLength: 10,
                       })}
                     />
                     {errors.title && (
@@ -197,9 +199,10 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
                     <Textarea
                       aria-invalid={errors.description ? 'true' : 'false'}
                       placeholder='Descrição do Evento'
+                      defaultValue={item?.description}
                       {...register('description', {
                         required: true,
-                        minLength: 1,
+                        minLength: 10,
                       })}
                     />
                     {errors.description && (
@@ -215,6 +218,7 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
                     <Input
                       aria-invalid={errors.localization ? 'true' : 'false'}
                       placeholder='Local do evento'
+                      defaultValue={item?.localization}
                       {...register('localization', {
                         required: true,
                         minLength: 1,
@@ -232,6 +236,7 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
                     <FormLabel>Tipo de Evento</FormLabel>
                     <Select
                       placeholder='Seleciona uma Opção'
+                      defaultValue={item?.state}
                       {...register('state', {
                         required: true,
                         minLength: 1,
@@ -250,6 +255,7 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
                   <FormControl>
                     <FormLabel>Categoria</FormLabel>
                     <Input
+                      defaultValue={item?.type}
                       placeholder='Categoria do evento'
                       {...register('type', {
                         required: true,
@@ -266,6 +272,7 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
                     <FormLabel>Forma de Gerenciamento</FormLabel>
                     <Input
                       aria-invalid={errors.managementWays ? 'true' : 'false'}
+                      defaultValue={item?.managementWays}
                       placeholder='Forma de Gerenciamento'
                       {...register('managementWays', {
                         required: true,
@@ -296,7 +303,7 @@ export const ModalForm = ({ onClose, onOpen, open }: IModalForm) => {
               mr={3}
               type='submit'
             >
-              Adicionar
+              Editar
             </Button>
           </ModalFooter>
         </ModalContent>
