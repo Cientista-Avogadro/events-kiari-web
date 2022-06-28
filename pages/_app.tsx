@@ -1,24 +1,24 @@
 import '../styles/globals.css';
-import type {AppProps} from 'next/app';
-import {ChakraProvider, CircularProgress, CircularProgressLabel, Text, Box} from '@chakra-ui/react';
-import {AuthProvider} from '../contexts/AuthContext';
-import {Provider, useDispatch} from 'react-redux';
+import type { AppProps } from 'next/app';
+import { ChakraProvider } from '@chakra-ui/react';
+import { AuthProvider } from '../contexts/AuthContext';
+import { Provider } from 'react-redux';
 import store from '../store';
-import {useRouter} from "next/router";
-import {useEffect, useState} from "react";
-import {delay} from "../services/auth";
+import { ApolloProvider } from '@apollo/client';
+import { client } from '../services/apollo';
 
-function MyApp({Component, pageProps}: AppProps) {
-
-    return (
-        <Provider store={store}>
-            <AuthProvider>
-                <ChakraProvider>
-                    <Component {...pageProps} />
-                </ChakraProvider>
-            </AuthProvider>
-        </Provider>
-    );
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <Provider store={store}>
+      <ApolloProvider client={client}>
+        <AuthProvider>
+          <ChakraProvider>
+            <Component {...pageProps} />
+          </ChakraProvider>
+        </AuthProvider>
+      </ApolloProvider>
+    </Provider>
+  );
 }
 
 export default MyApp;

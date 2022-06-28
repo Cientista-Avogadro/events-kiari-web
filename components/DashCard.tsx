@@ -22,11 +22,14 @@ export const DashCard = ({
 }: IDashCard) => {
   return (
     <Box
+      display={'flex'}
+      flexDir='column'
       bgColor={'#fff'}
       p={'20px 60px 20px 20px '}
       borderRadius='5'
       gap='5px'
       flex='1'
+      boxShadow={'10px 10px 18px 0px rgba(0,0,0,0.08)'}
     >
       <Text>{title}</Text>
       <Heading size='xl' fontWeight={'medium'}>

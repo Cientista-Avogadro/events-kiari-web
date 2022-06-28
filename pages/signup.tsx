@@ -10,18 +10,50 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Image from 'next/image';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import loginImage from '../assets/img/siginImage.png';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import {
+  auth,
+  registerWithEmailAndPassword,
+  signInWithGoogle,
+} from '../firebase';
+import { useRouter } from 'next/router';
+
+interface Inputs {
+  username: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+}
 
 const SignUp = () => {
-  const { register, handleSubmit } = useForm();
+  const [user, loading, error] = useAuthState(auth);
+  const [errPs, setErrPs] = useState('');
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>();
 
-  async function handleSignUp(data: any) {
-    console.log(data);
-  }
+  const handleSignUp: SubmitHandler<Inputs> = data => {
+    if (data?.password === data?.passwordConfirm) {
+      registerWithEmailAndPassword(data.username, data.email, data.password);
+    } else {
+      setErrPs('password diferentes');
+    }
+  };
 
+  useEffect(() => {
+    if (loading) {
+      // maybe trigger a loading screen
+      return;
+    }
+    if (user) router.push('/');
+  }, [user, loading, router]);
   return (
     <Grid
       templateColumns={{
@@ -89,32 +121,34 @@ const SignUp = () => {
             pb={'30px'}
           >
             <FormControl isRequired>
-              <FormLabel htmlFor='firstName'>Primeiro Nome</FormLabel>
-              <Input {...register('firstName')} id='firstName' />
-            </FormControl>
-            <FormControl isRequired>
-              <FormLabel htmlFor='lastName'>Último Nome</FormLabel>
-              <Input {...register('lastName')} id='lastName' />
-            </FormControl>
-          </Flex>
-          <Flex
-            gap='20px'
-            flexDir={{ base: 'column', lg: 'row', md: 'row', sm: 'row' }}
-            pb={'30px'}
-          >
-            <FormControl isRequired>
-              <FormLabel htmlFor='userName'>Nome de Usuário</FormLabel>
-              <Input {...register('userName')} id='userName' />
+              <FormLabel htmlFor='username'>Nome de Usuário</FormLabel>
+              <Input
+                {...register('username', {
+                  required: true,
+                  minLength: 10,
+                })}
+                id='username'
+              />
+              {errors?.username && (
+                <i style={{ color: 'red' }}>insira um username válido</i>
+              )}
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor='email'>E-mail</FormLabel>
-              <Input {...register('email')} id='email' type='email' />
+              <Input
+                {...register('email', {
+                  required: true,
+                  minLength: 10,
+                })}
+                id='email'
+                type='email'
+              />
+              {errors?.username && (
+                <i style={{ color: 'red' }}>insira um username válido</i>
+              )}
             </FormControl>
           </Flex>
-          <FormControl isRequired>
-            <FormLabel htmlFor='phone'>Número de Telefone</FormLabel>
-            <Input {...register('phone')} id='phone' type='tel' />
-          </FormControl>
+
           <Flex
             gap='20px'
             pt={'30px'}
@@ -122,15 +156,27 @@ const SignUp = () => {
           >
             <FormControl isRequired>
               <FormLabel htmlFor='password'>Senha</FormLabel>
-              <Input {...register('password')} id='password' type='password' />
+              <Input
+                {...register('password', {
+                  required: true,
+                  minLength: 6,
+                })}
+                id='password'
+                type='password'
+              />
+              {errPs && <i style={{ color: 'red' }}>{errPs}</i>}
             </FormControl>
             <FormControl isRequired>
               <FormLabel htmlFor='passwordConfirm'>Confirmar Senha</FormLabel>
               <Input
-                {...register('passwordConfirm')}
+                {...register('passwordConfirm', {
+                  required: true,
+                  minLength: 6,
+                })}
                 id='passwordConfirm'
                 type='password'
               />
+              {errPs && <i style={{ color: 'red' }}>{errPs}</i>}
             </FormControl>
           </Flex>
           <Checkbox
@@ -156,16 +202,30 @@ const SignUp = () => {
               termos e políticas de privacidade
             </span>
           </Checkbox>
-          <Button
-            bgColor={'#512DA8'}
-            color='#fff'
-            w='170px'
-            _hover={{ backgroundColor: '#512DA8fa' }}
-            type={'submit'}
-            alignSelf={{ base: 'center', lg: '', md: 'flex-start' }}
-          >
-            Registar-se
-          </Button>
+          <Flex gap='20px'>
+            <Button
+              bgColor={'#512DA8'}
+              color='#fff'
+              w='170px'
+              _hover={{ backgroundColor: '#512DA8fa' }}
+              type={'submit'}
+              alignSelf={{ base: 'center', lg: '', md: 'flex-start' }}
+              isLoading={loading}
+            >
+              Cadastrar
+            </Button>
+            <Button
+              bgColor={'#6e54ab'}
+              color='#fff'
+              w='170px'
+              _hover={{ backgroundColor: '#512DA8fa' }}
+              alignSelf={{ base: 'center', lg: '', md: 'flex-start' }}
+              isLoading={loading}
+              onClick={signInWithGoogle}
+            >
+              Entrar com Google
+            </Button>
+          </Flex>
           <Text
             display={'flex'}
             gap='10px'

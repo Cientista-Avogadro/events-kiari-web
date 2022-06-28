@@ -29,23 +29,18 @@ import NavBar from '../../components/NavBar';
 import SideBar from '../../components/SideBar';
 import { Card } from '../../components/Card';
 import Head from 'next/head';
-import { cardDatas } from '../../services/Card';
 import { useEffect, useState } from 'react';
+import { IinitialProps } from '../../store';
 
 const Index: NextPage = () => {
-  const isOpen = useSelector((state: any) => state.isOpen);
+  const { isOpen, cardDatas } = useSelector((state: IinitialProps) => state);
   const router = useRouter();
   const [close, setClose] = useState(true);
   const [selected, setSelected] = useState('');
   const [searched, setSearched] = useState('');
-  const [lenght, setLenght] = useState(cardDatas.length);
+  const [lenght, setLenght] = useState(cardDatas?.length);
 
-  const arrayPrivate = cardDatas
-    .filter(item => item.type.includes(selected))
-    .filter(item => item.title.includes(searched))
-    .map(item => item);
-
-  console.log(arrayPrivate);
+  console.log(cardDatas);
 
   return (
     <>
@@ -72,7 +67,7 @@ const Index: NextPage = () => {
             }
           />
           <Content>
-            <Flex>
+            <Flex h='90vh'>
               <Flex
                 flexDir={'column'}
                 width='100%'
@@ -113,7 +108,7 @@ const Index: NextPage = () => {
                           onChange={e => setSelected(e.toString())}
                         >
                           <MenuItemOption value={''}>Nenhum</MenuItemOption>
-                          {cardDatas.map(types => (
+                          {cardDatas?.map(types => (
                             <MenuItemOption key={types.id} value={types.buyied}>
                               {types.buyied}
                             </MenuItemOption>
@@ -127,13 +122,11 @@ const Index: NextPage = () => {
                   <Flex flexDir={'column'} rowGap='30px'>
                     <Text>Lista de Eventos ({lenght})</Text>
                     <SimpleGrid
-                      minChildWidth='353px'
                       spacing={'12px'}
-                      width={''}
+                      gridTemplateColumns='repeat(3, 1fr)'
                     >
                       {cardDatas
-                        .filter(item => item.buyied.includes(selected))
-                        .filter(item => item.title.includes(searched))
+                        ?.filter(item => item.title.includes(searched))
                         .map(item => (
                           <Card key={item.id} item={item} isReserved={true} />
                         ))}
@@ -143,16 +136,12 @@ const Index: NextPage = () => {
               </Flex>
 
               <Box
-                backgroundColor={'#F4F4F4'}
-                p={!close ? '12px' : '12px'}
+                my='20px'
+                borderLeft={'1px solid #D6CACA'}
                 width={!close ? '0' : ''}
                 transition='flex 0.5s ease-out'
                 flex={!close ? '0' : '1.2'}
               >
-                <Grid
-                  gap={isOpen ? '4px' : '4px'}
-                  templateColumns='repeat(3, auto)'
-                ></Grid>
                 <Flex align='center' position={'relative'}>
                   <Box
                     style={{
@@ -188,20 +177,96 @@ const Index: NextPage = () => {
                       />
                     )}
                   </Box>
-
-                  <Divider backgroundColor='#C4C4C4' h={'2px'} width='98%' />
+                  {/* 
+                  <Divider backgroundColor='#C4C4C4' h={'2px'} width='98%' /> */}
                 </Flex>
                 {close && (
-                  <Box mt={'20px'}>
+                  <Box mt={'20px'} p='10px 15px'>
                     <Heading
                       size={'md'}
                       display='flex'
                       justifyContent={'center'}
                       alignItems={'center'}
                       alignSelf={'center'}
+                      mb='10px'
                     >
-                      Localização no Mapa
+                      Cronograma de Eventos
                     </Heading>
+                    <Box
+                      bgColor={'#fff'}
+                      width='full'
+                      h='300px'
+                      display='grid'
+                      placeItems={'center'}
+                      border='1px solid #eee'
+                      borderRadius={'10px'}
+                      mb='20px'
+                    >
+                      Date Time Picker
+                    </Box>
+                    <Flex flexDir='column' gap='20px'>
+                      <Box
+                        bgColor='#141414'
+                        width='full'
+                        height='76px'
+                        borderRadius='8px'
+                        display={'flex'}
+                        alignItems='center'
+                        px='20px'
+                        gap='20px'
+                        color={'#fff'}
+                      >
+                        <Heading size='md'>28</Heading>
+                        <Divider
+                          backgroundColor='#C4C4C4'
+                          h={'70%'}
+                          orientation='vertical'
+                          width='1px'
+                        />
+                        <Flex gap='20px'>
+                          <Flex flexDir={'column'}>
+                            <Heading size='md'>O Recontro</Heading>
+                            <Text fontSize={'12px'} color={'#EEEEEE'}>
+                              Cientista Avogadro
+                            </Text>
+                          </Flex>
+                          <Text fontSize={'12px'} color={'#EEEEEE'}>
+                            09:00
+                          </Text>
+                        </Flex>
+                      </Box>
+
+                      <Box
+                        bgColor='#141414'
+                        width='full'
+                        height='76px'
+                        borderRadius='8px'
+                        display={'flex'}
+                        alignItems='center'
+                        px='20px'
+                        gap='20px'
+                        color={'#fff'}
+                      >
+                        <Heading size='md'>28</Heading>
+                        <Divider
+                          backgroundColor='#C4C4C4'
+                          h={'70%'}
+                          orientation='vertical'
+                          width='1px'
+                        />
+                        <Flex gap='20px'>
+                          <Flex flexDir={'column'}>
+                            <Heading size='md'>O Recontro</Heading>
+                            <Text fontSize={'12px'} color={'#EEEEEE'}>
+                              Cientista Avogadro
+                            </Text>
+                          </Flex>
+                          <Text fontSize={'12px'} color={'#EEEEEE'}>
+                            09:00
+                          </Text>
+                        </Flex>
+                      </Box>
+                    </Flex>
                   </Box>
                 )}
               </Box>

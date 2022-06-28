@@ -59,6 +59,7 @@ import { MdDelete, MdOutlineGpsFixed } from 'react-icons/md';
 import { VscRepoPush } from 'react-icons/vsc';
 import { CustomChart } from '../../../components/Charts';
 import { CustomCircularProgesss } from '../../../components/CustomCircularProgesss';
+import { format } from 'date-fns';
 
 type Inputs = {
   name: string;
@@ -483,6 +484,7 @@ const Index: NextPage = () => {
                     >
                       Localização no Mapa
                     </Heading>
+                    Sem Dados
                   </Box>
                 )}
               </Box>

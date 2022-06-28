@@ -4,13 +4,20 @@ import { useRouter } from 'next/router';
 
 import { parseCookies } from 'nookies';
 import { useSelector } from 'react-redux';
+import { BarCharts } from '../components/BarCharts';
 import Content from '../components/Content';
 import { DashCard, IDashCard } from '../components/DashCard';
+import { DoughnutCharts } from '../components/DoughnutCharts';
 import NavBar from '../components/NavBar';
 import SideBar from '../components/SideBar';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase';
+import { useEffect } from 'react';
 
 const Home: NextPage = () => {
   const isOpen = useSelector((state: any) => state.isOpen);
+  const [user, loading, error] = useAuthState(auth);
+  const router = useRouter();
 
   const dashCards: IDashCard[] = [
     {
@@ -22,14 +29,14 @@ const Home: NextPage = () => {
     },
     {
       title: 'Total Events',
-      value: 10000,
+      value: 1000,
       percentage: 12,
       showLastInfo: true,
       showPercentage: true,
     },
     {
       title: 'Events Buyied',
-      value: 10000,
+      value: 100,
       percentage: -12,
       showLastInfo: false,
       showPercentage: false,
@@ -38,10 +45,18 @@ const Home: NextPage = () => {
     },
     {
       title: 'Total',
-      value: 10000,
+      value: 500,
       percentage: -12,
     },
   ];
+
+  useEffect(() => {
+    if (loading) {
+      // maybe trigger a loading screen
+      return;
+    }
+    if (!user) router.push('/login');
+  }, [user, loading, router]);
 
   return (
     <Grid
@@ -59,7 +74,7 @@ const Home: NextPage = () => {
         <NavBar pathname='dashboard' />
         <Content>
           <Flex flexDir={'column'} rowGap='50px' px='30px' py='30px'>
-            <Flex gap='10px' wrap={'wrap'}>
+            <Flex gap='30px' wrap={'wrap'}>
               {dashCards.map((item, i: number) => (
                 <DashCard
                   key={i}
@@ -73,28 +88,20 @@ const Home: NextPage = () => {
                 />
               ))}
             </Flex>
+
+            <Flex gap={'30px'} wrap='wrap'>
+              <Box bgColor='#fff' p='30px' flex='1 0 0'>
+                <BarCharts />
+              </Box>
+              <Box bgColor='#fff' p='30px' flex='1 0 0'>
+                <DoughnutCharts />
+              </Box>
+            </Flex>
           </Flex>
         </Content>
       </Flex>
     </Grid>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async ctx => {
-  const { ['@RNAuth:token']: token } = parseCookies(ctx);
-  const { ['@RNAuth:user']: user } = parseCookies(ctx);
-  if (!token || !user) {
-    return {
-      redirect: {
-        destination: '/login',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
 };
 
 export default Home;

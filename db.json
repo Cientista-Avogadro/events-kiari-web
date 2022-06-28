@@ -1,0 +1,24 @@
+{
+  "events": [
+    {
+      "title": "Defesa Final",
+      "description": "lorem ipsum",
+      "localization": "luanda, IPIL",
+      "state": "private",
+      "type": "Religioso",
+      "managementWays": "card",
+      "img": "https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?cs=srgb&dl=pexels-wendy-wei-1190298.jpg&fm=jpg",
+      "id": "84bbab99-f5d9-11ec-b939-0242ac120002"
+    },
+    {
+      "title": "Defesa Final",
+      "description": "Ninguém Apacere",
+      "localization": "Luanda, IPIL",
+      "state": "public",
+      "type": "Escolar",
+      "managementWays": "money",
+      "img": "https://images.pexels.com/photos/625644/pexels-photo-625644.jpeg?cs=srgb&dl=pexels-mikky-k-625644.jpg&fm=jpg",
+      "id": "54f4e707-0ecc-4110-8df7-925a043490f8"
+    }
+  ]
+}
