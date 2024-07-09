@@ -10,15 +10,14 @@ import {
   Text,
 } from '@chakra-ui/react';
 import Image from 'next/image';
-import React, { useEffect, useState } from 'react';
-import loginImage from '../assets/img/loginImage.png';
 import Link from 'next/link';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
-import { delay } from '../services/auth';
-import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import loginImage from '../assets/img/loginImage.png';
+import { useAuth } from '../contexts/AuthContext';
 import { auth, logInWithEmailAndPassword, signInWithGoogle } from '../firebase';
 
 interface Inputs {
@@ -49,8 +48,11 @@ const Login = () => {
       // maybe trigger a loading screen
       return;
     }
-    if (!user) router.push('/login');
-  }, [user, loading, router]);
+    if (!user)
+      router.push('/login');
+    else
+      router.push("/");
+  }, [user, loading]);
 
   return (
     <Grid

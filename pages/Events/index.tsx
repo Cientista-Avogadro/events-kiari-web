@@ -82,7 +82,7 @@ const Index: NextPage = () => {
       setData(res);
       dispatch({ type: 'set', cardDatas: res });
     });
-  }, [dispatch]);
+  }, [dispatch, open]);
 
   useEffect(() => {
     if (data) {
@@ -90,6 +90,13 @@ const Index: NextPage = () => {
       setArrayPrivate(data?.filter(item => item.state === 'private'));
     }
   }, [data]);
+
+  useEffect(() => {
+    if (data) {
+      setArrayPublic(data?.filter(item => item.state === 'public'));
+      setArrayPrivate(data?.filter(item => item.state === 'private'));
+    }
+  }, [open, data]);
 
   useEffect(() => {
     if (arrayPublic) {

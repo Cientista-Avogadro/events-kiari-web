@@ -1,20 +1,20 @@
 import { initializeApp } from 'firebase/app';
 import {
   GoogleAuthProvider,
-  getAuth,
-  signInWithPopup,
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  getAuth,
   sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from 'firebase/auth';
 import {
+  addDoc,
+  collection,
+  getDocs,
   getFirestore,
   query,
-  getDocs,
-  collection,
   where,
-  addDoc,
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -95,10 +95,7 @@ const logout = () => {
 
 export {
   auth,
-  db,
-  signInWithGoogle,
-  logInWithEmailAndPassword,
-  registerWithEmailAndPassword,
-  sendPasswordReset,
-  logout,
+  db, logInWithEmailAndPassword, logout, registerWithEmailAndPassword,
+  sendPasswordReset, signInWithGoogle
 };
+
