@@ -22,6 +22,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@reduxjs/toolkit": "^1.8.1",
+    "@types/lodash": "^4.17.5",
     "axios": "^0.27.0",
     "chart.js": "^3.0.0",
     "concurrently": "^7.2.2",
